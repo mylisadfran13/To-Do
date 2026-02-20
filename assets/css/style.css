@@ -11,3 +11,21 @@ body {
     background-attachment: fixed;   
 }
 
+#create-case {
+    position: fixed;
+    right: 50px;
+    top: 50px;
+    width: 150px;
+    height: 40px;
+    background-color: #e8b484;
+    color: rgb(128, 33, 33);
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    opacity: 0.7;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+} 
+
+#create-case:hover {
+    opacity: 1;
+}
