@@ -199,7 +199,6 @@ function makeDraggable(element) {
         const maxLeft = board.offsetWidth - element.offsetWidth;
         
         const topMargin = Math.max(0, Math.min(maxTop, newTop));
-        console.log(element.style.top.match(/\d+/g)[0], topMargin); // убрать
         if (topMargin > 50 && topMargin < window.innerHeight - 50 || +(element.style.top.match(/\d+/g)[0]) < topMargin) {
             element.style.top = Math.max(0, Math.min(maxTop, newTop)) + "px";
         }
@@ -326,13 +325,20 @@ function closeInfoModal() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    console.log('Скрипт загружен!'); // убрать
-    
     const board = document.getElementById("board");
     board.ondblclick = function(e) {
         createEmptyNote(e.clientX, e.clientY);
     };
 
+    board.addEventListener('click', function(e) {
+        if (e.target === this) {
+            if (selectedNote) {
+                selectedNote.classList.remove('selected');
+                selectedNote = null;
+            }
+        }
+    });
+    
     const modal = document.getElementById("noteModal");
     modal.onclick = function(e) {
         if (e.target === this) {
