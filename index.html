@@ -1,12 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To Do List</title>
     <link rel="stylesheet" href="/To-Do/assets/css/style.css">
+    <script src="/To-Do/assets/javascript/script.js" defer></script>
 </head>
 <body>
-    <button id="create-case">Создать дело</button>
+    <div class="board" id="board"></div>
+
+    <button type="button" class="info-btn" id="infoBtn">?</button>
+
+    <div class="modal" id="noteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Новая заметка</h3>
+                <button type="button" class="help-btn" id="colorHelpBtn" title="Что означают цвета?">?</button>
+            </div>
+            
+            <div class="color-picker">
+                <button type="button" class="color-btn active" data-color="white" data-image="page.png" title="Обычная">
+                     <span class="star-icon star-white"></span>
+                </button>
+                <button type="button" class="color-btn" data-color="green" data-image="greenPage.png" title="Несрочно">
+                    <span class="star-icon star-green"></span>
+                </button>
+                <button type="button" class="color-btn" data-color="yellow" data-image="yellowPage.png" title="Средняя важность">
+                    <span class="star-icon star-yellow"></span>
+                </button>
+                <button type="button" class="color-btn" data-color="red" data-image="redPage.png" title="Срочно!">
+                    <span class="star-icon star-red"></span>
+                </button>
+            </div>
+            
+            <textarea id="noteText" placeholder="Напишите, что хотите сделать..." autofocus></textarea>
+            
+            <div class="modal-buttons">
+                <button class="cancel-btn" onclick="closeModal()">Отмена</button>
+                <button class="create-btn" onclick="createNoteFromModal()">Создать</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal" id="colorHelpModal">
+        <div class="modal-content color-help-content">
+            <h3>Что означают цвета?</h3>
+            <div class="color-help-list">
+                <div class="color-help-item">
+                    <span class="color-img color-img-white"></span>
+                    <span><strong>Белый</strong> — обычная заметка</span>
+                </div>
+                <div class="color-help-item">
+                    <span class="color-img color-img-green"></span>
+                    <span><strong>Зеленый</strong> — несрочное дело (можно сделать позже)</span>
+                </div>
+                <div class="color-help-item">
+                    <span class="color-img color-img-yellow"></span>
+                    <span><strong>Жёлтый</strong> — средняя важность (сделать в ближайшее время)</span>
+                </div>
+                <div class="color-help-item">
+                    <span class="color-img color-img-red"></span>
+                    <span><strong>Красный</strong> — срочно!</span>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="cancel-btn" onclick="closeColorHelpModal()">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="infoModal">
+        <div class="modal-content scroll-content" id="scrollContent">
+            <div class="scroll-text">
+                <h3>Как пользоваться доской</h3>
+                <div class="info-text">
+                    <p><strong>Создать заметку:</strong> дважды кликните по пустому месту на доске</p>
+                    <p><strong>Редактировать заметку:</strong> дважды кликните по заметке</p>
+                    <p><strong>Изменить размер заметки:</strong> потяните за уголок правого нижнего угла</p>
+                    <p><strong>Переместить:</strong> перетащите заметку за любую область (кроме текста)</p>
+                    <p><strong>Удалить:</strong> наведите на заметку и нажмите на крестик</p>
+                    <p><strong>Сохранить:</strong> все заметки сохраняются автоматически</p>
+                    <h4>Приятного пользования❣</h4>
+                </div>
+                <button class="cancel-btn" onclick="closeInfoModal()">Закрыть</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

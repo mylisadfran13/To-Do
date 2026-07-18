@@ -11,21 +11,485 @@ body {
     background-attachment: fixed;   
 }
 
-#create-case {
+.board {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    cursor: crosshair; 
+}
+
+.note {
+    position: absolute;
+    cursor: move;
+    user-select: none;
+    z-index: 1;
+    transition: box-shadow 0.2s;
+    min-width: 150px;
+    min-height: 150px;
+}
+
+.note.resizing {
+    cursor: nwse-resize !important;
+    opacity: 0.8;
+}
+
+.note.selected {
+    outline: 2px dashed #e8b484;
+    outline-offset: 2px;
+}
+
+.note img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    pointer-events: none;
+    object-fit: fill;
+}
+
+.note textarea {
+    position: absolute;
+    top: 20%;
+    left: 10%;
+    width: 80%;
+    height: 50%;
+    background: transparent;
+    border: none;
+    resize: none;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    font-size: 16px;
+    line-height: 1.4;
+    color: rgb(128, 33, 33);
+    outline: none;
+    overflow: auto;
+    padding: 5px;
+}
+
+.resize-handle {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    background: rgba(255,255,255,0.7);
+    border: 2px solid #666;
+    border-radius: 3px;
+    cursor: nwse-resize;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+}
+
+.delete-note {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 25px;
+    height: 25px;
+    background: #ff4444;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+    border: 2px solid white;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 11;
+}
+
+.note:hover .delete-note {
+    opacity: 1;
+}
+
+.modal {
+    display: none;
     position: fixed;
-    right: 50px;
-    top: 50px;
-    width: 150px;
-    height: 40px;
-    background-color: #e8b484;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #fff9e6;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    max-width: 400px;
+    width: 90%;
+}
+
+.modal-content h3 {
+    margin-top: 0;
     color: rgb(128, 33, 33);
     font-family: "Comic Sans MS", "Comic Sans", cursive;
-    opacity: 0.7;
+}
+
+.modal-content textarea {
+    width: 100%;
+    height: 150px;
+    padding: 15px;
+    border: 2px solid #e8b484;
+    border-radius: 10px;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    font-size: 16px;
+    background: #fffdf5;
+    margin: 15px 0;
+    box-sizing: border-box;
+    color: rgb(128, 33, 33);
+    outline: none;
+}
+
+.modal-content textarea:focus {
+    border-color: #e8b484;  
+    box-shadow: 0 0 8px rgba(128, 33, 33, 0.3); 
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.modal-buttons button {
+    padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-} 
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    font-size: 16px;
+}
 
-#create-case:hover {
+.create-btn {
+    background-color: #e8b484;
+    color: rgb(128, 33, 33);
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.create-btn:hover {
     opacity: 1;
+}
+
+.cancel-btn {
+    background: #ddd;
+    color: #333;
+}
+
+.info-btn {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e8b484;
+    color: rgb(128, 33, 33);
+    border-color: rgb(128, 33, 33);
+    border-style: dashed;
+    font-size: 20px;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    cursor: pointer;
+    z-index: 1500;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+.info-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    background-color: #ebc4a0;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); 
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.scroll-content {
+    position: relative;
+    max-width: 600px;        
+    width: 92%;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    overflow: visible;
+}
+
+.scroll-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('/To-Do/assets/images/roll.png');
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 1;              
+    border-radius: 10px;
+
+    z-index: 1;
+    pointer-events: none;
+}
+
+.scroll-text {
+    position: relative;
+    z-index: 2;
+    padding: 18% 16%;        
+    min-height: 550px;       
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.scroll-text h3 {
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    color: rgb(128, 33, 33);
+    font-size: 24px;
+    text-align: center;
+    margin: 0 0 10px 0;
+}
+
+.scroll-text h4 {
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    color: rgb(128, 33, 33);
+    font-size: 24px;
+    text-align: center;
+    margin: 0 0 10px 0;
+}
+
+.info-text {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.info-text p {
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    font-size: 16px;         
+    line-height: 1.5;
+    color: rgb(171, 97, 97);
+    margin: 4px 0;          
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+.info-text p strong {
+    color: rgb(128, 33, 33);
+}
+
+.scroll-text .cancel-btn {
+    align-self: center;
+    margin-top: 12px;
+    padding: 8px 25px;
+    background-color: #e8b484;
+    color: rgb(128, 33, 33);
+    border: 2px dashed rgb(128, 33, 33);
+    border-radius: 8px;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+
+.scroll-text .cancel-btn:hover {
+    opacity: 1;
+    background-color: #ebc4a0;
+    transform: scale(1.05);
+}
+
+.color-help-list {
+    margin: 15px 0;
+}
+
+.color-help-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 8px 12px;
+    margin: 6px 0;
+    background: rgba(232, 180, 132, 0.1);
+    border-radius: 8px;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    font-size: 15px;
+    color: rgb(60, 25, 15);
+}
+
+.color-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 4px;
+    border: 2px solid #ccc;
+    flex-shrink: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.color-img-white {
+    background-image: url('/To-Do/assets/images/page.png');
+}
+
+.color-img-green {
+    background-image: url('/To-Do/assets/images/greenPage.png');
+}
+
+.color-img-yellow {
+    background-image: url('/To-Do/assets/images/yellowPage.png');
+}
+
+.color-img-red {
+    background-image: url('/To-Do/assets/images/redPage.png');
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.modal-header h3 {
+    margin: 0;
+}
+
+.help-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #e8b484;
+    color: rgb(128, 33, 33);
+    border: 2px dashed rgb(128, 33, 33);
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0.7;
+}
+
+.help-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.color-picker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0 15px 0;
+    padding: 8px 12px;
+    background: rgba(232, 180, 132, 0.15);
+    border-radius: 8px;
+}
+
+
+.color-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 3px solid transparent !important;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+
+.color-btn:hover {
+    transform: scale(1.15);
+    opacity: 0.9;
+}
+
+.color-btn.active {
+    border: 2px dashed rgb(128, 33, 33) !important;
+    transform: scale(1.1);
+
+}
+
+.color-help-content {
+    max-width: 450px;
+}
+
+.color-help-list {
+    margin: 15px 0;
+}
+
+.color-help-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 8px 12px;
+    margin: 6px 0;
+    background: rgba(232, 180, 132, 0.1);
+    border-radius: 8px;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    font-size: 15px;
+    color: rgb(60, 25, 15);
+}
+
+.color-help-item img {
+    border: 2px solid #ccc;
+    border-radius: 4px;
+}
+
+.color-help-item strong {
+    color: rgb(128, 33, 33);
+}
+
+.star-icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    pointer-events: none;
+}
+
+.star-white {
+    background-image: url('/To-Do/assets/images/whiteStar.png');
+}
+
+.star-green {
+    background-image: url('/To-Do/assets/images/greenStar.png');
+}
+
+.star-yellow {
+    background-image: url('/To-Do/assets/images/yellowStar.png');
+}
+
+.star-red {
+    background-image: url('/To-Do/assets/images/redStar.png');
 }
